@@ -1,5 +1,6 @@
 # Load Packages
 library(plyr)
+library(geojsonio)
 
 # Call data
 fire_data_VIIRS <- read.csv(url("https://firms.modaps.eosdis.nasa.gov/active_fire/viirs/text/VNP14IMGTDL_NRT_USA_contiguous_and_Hawaii_7d.csv"))
@@ -23,6 +24,9 @@ fire_klamathon <- fire_data[ which(fire_data$latitude > 40 & fire_data$latitude 
 # Date and Time
 fire_klamathon$acq_time_std <- format( as.POSIXct(Sys.Date()) + fire_klamathon$acq_time*60, format="%H:%M:%S", tz="UCT")
 
-fire_klamathon$date_time <- as.POSIXct(paste(fire_klamathon$acq_date, fire_klamathon$acq_time_std), format="%Y-%m-%d %H:%M:%S")
+fire_klamathon$time_date <- as.POSIXct(paste(fire_klamathon$acq_date, fire_klamathon$acq_time_std), format="%Y-%m-%d %H:%M:%S")
 
-write.csv(fire_klamathon, file="fire_klamathon.csv")
+fire_klamathon <- rename(fire_klamathon, c("acq_date"="time"))
+
+write.csv(fire_klamathon, file="leaflet/data/fire.csv")
+geojson_write(fire_klamathon, file="leaflet/data/fire")
