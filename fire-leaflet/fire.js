@@ -3,17 +3,17 @@ var sliderControl = null;
 var map = L.map('mapid').setView([41.96, -122.54], 12);
 
 var fire = $.ajax({
-	url:"file:///Users/Marple/Dropbox%20(Personal)/Information_visualization/fire/leaflet/data/fire.geojson",
+	url:"PATH-TO-GEO-JSON (must be full URL)",
 	dataType: "json",
 	success: console.log("Fire data successfully loaded."),
 	error: function (xhr) {
 		alert(xhr.statusText)
 	}
 })
-
+// These bins can be changed to reflect the range of brightness values.
 function getValue(x) {
 	return 	x > 350 ? "#99000d" :
-		   	x >	333 ? "#cb181d" :
+		   	x > 333 ? "#cb181d" :
 		   	x > 316 ? "#ef3b2c" :
 		   	x > 299 ? "#fb6a4a" :
 		   	x > 282 ? "#fc9272" :
