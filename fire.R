@@ -2,6 +2,19 @@
 library(plyr)
 library(geojsonio)
 
+# Sets the geographic parameters of the fire - change these to focus the map on different fires. Enter these as latitude and longitude in signed degree format.
+# Northern bound
+LatBoundN <- SET THIS
+
+# Southern bound
+LatBoundS <- SET THIS
+
+# Western Bound
+LonBoundW <- SET THIS
+  
+# Eastern Bound
+LonBoundE <- SET THIS
+
 # Calls all fire hotspot data from MODIS and VIIRS
 fire_data_VIIRS <- read.csv(url("https://firms.modaps.eosdis.nasa.gov/active_fire/viirs/text/VNP14IMGTDL_NRT_USA_contiguous_and_Hawaii_7d.csv"))
 
@@ -18,14 +31,14 @@ fire_data_VIIRS <- fire_data_VIIRS[fire_vars]
 
 fire_data <- rbind(fire_data_MODIS, fire_data_VIIRS)
 
-# Limit the fire observations to Southern Oregon/Northern California. Can be changed for other fire observations.
-fire_klamathon <- fire_data[ which(fire_data$latitude > 40 & fire_data$latitude < 42 & fire_data$longitude < -119), ]
+# Limit the fire observations.
+fire_specific <- fire_data[ which(fire_data$latitude > LatBoundS & fire_data$latitude < LatBoundN & fire_data$longitude < LonBoundW & fire_data$longitude < LonBoundE), ]
 
 # Creates a date and time variable for use by leaflet
-fire_klamathon$acq_time_std <- format( as.POSIXct(Sys.Date()) + fire_klamathon$acq_time*60, format="%H:%M:%S", tz="UCT")
+fire_specific$acq_time_std <- format( as.POSIXct(Sys.Date()) + fire_klamathon$acq_time*60, format="%H:%M:%S", tz="UCT")
 
-fire_klamathon$time <- as.POSIXct(paste(fire_klamathon$acq_date, fire_klamathon$acq_time_std), format="%Y-%m-%d %H:%M:%S")
+fire_specific$time <- as.POSIXct(paste(fire_klamathon$acq_date, fire_klamathon$acq_time_std), format="%Y-%m-%d %H:%M:%S")
 
 # Outputs CSV and GEOJSON data
-write.csv(fire_klamathon, file="leaflet/data/fire.csv")
-geojson_write(fire_klamathon, file="leaflet/data/fire")
+write.csv(fire_specific, file="fire-leaflet/data/fire.csv")
+geojson_write(fire_specific, file="fire-leaflet/data/fire")
